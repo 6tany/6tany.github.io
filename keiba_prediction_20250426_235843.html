@@ -1,0 +1,4532 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>競馬予測結果</title>
+        <style>
+            body {
+                font-family: 'Helvetica Neue', Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #f5f5f5;
+            }
+            h1 {
+                color: #1a5276;
+                text-align: center;
+                margin-bottom: 30px;
+                border-bottom: 2px solid #3498db;
+                padding-bottom: 10px;
+            }
+            h2 {
+                color: #2874a6;
+                margin-top: 30px;
+                border-left: 5px solid #3498db;
+                padding-left: 10px;
+            }
+            .race-container {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                margin-bottom: 25px;
+                padding: 15px;
+                border-top: 4px solid #3498db;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 15px;
+            }
+            th {
+                background-color: #f2f6f9;
+                color: #2874a6;
+                text-align: left;
+                padding: 12px 15px;
+                border-bottom: 2px solid #ddd;
+            }
+            td {
+                padding: 10px 15px;
+                border-bottom: 1px solid #ddd;
+            }
+            tr:hover {
+                background-color: #f5f9fc;
+            }
+            .dark-horse {
+                background-color: #fcf8e3;
+                border-left: 3px solid #f39c12;
+            }
+            .dark-horse-marker {
+                color: #d35400;
+                font-weight: bold;
+            }
+            .suggestion-box {
+                background-color: #ebf5fb;
+                border-left: 4px solid #3498db;
+                padding: 10px 15px;
+                margin-top: 15px;
+                border-radius: 4px;
+            }
+            .suggestion-title {
+                font-weight: bold;
+                color: #2874a6;
+                margin-bottom: 8px;
+            }
+            .timestamp {
+                text-align: center;
+                color: #7f8c8d;
+                font-size: 0.9em;
+                margin-top: 30px;
+            }
+            .top-pick {
+                background-color: #e8f8f5;
+            }
+            /* フィルター関連のスタイル */
+            .filter-container {
+                background-color: white;
+                padding: 15px;
+                margin-bottom: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 15px;
+            }
+            .filter-group {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                min-width: 150px;
+            }
+            .filter-label {
+                font-weight: bold;
+                margin-bottom: 5px;
+                color: #2874a6;
+            }
+            select, button {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                background-color: white;
+                font-size: 14px;
+            }
+            button {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                font-weight: bold;
+            }
+            button:hover {
+                background-color: #2980b9;
+            }
+            .filter-count {
+                font-weight: bold;
+                color: #2874a6;
+                text-align: center;
+                margin: 10px 0;
+            }
+            .hidden {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>競馬予測結果</h1>
+        
+        <!-- フィルタリングコントロール -->
+        <div class="filter-container">
+            <div class="filter-group">
+                <span class="filter-label">競馬場で絞り込み</span>
+                <select id="venue-filter">
+                    <option value="all">すべての競馬場</option>
+    <option value="京都">京都</option>
+<option value="東京">東京</option>
+<option value="福島">福島</option>
+
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <span class="filter-label">レース番号で絞り込み</span>
+                <select id="race-number-filter">
+                    <option value="all">すべてのレース</option>
+    <option value="01">01レース</option>
+<option value="02">02レース</option>
+<option value="03">03レース</option>
+<option value="04">04レース</option>
+<option value="05">05レース</option>
+<option value="06">06レース</option>
+<option value="07">07レース</option>
+<option value="08">08レース</option>
+<option value="09">09レース</option>
+<option value="10">10レース</option>
+<option value="11">11レース</option>
+<option value="12">12レース</option>
+
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <span class="filter-label">フィルターをクリア</span>
+                <button id="clear-filters">すべて表示</button>
+            </div>
+        </div>
+        
+        <p class="filter-count" id="race-count"></p>
+    
+        <div class="race-container" data-venue="京都" data-race-number="01">
+            <h2>競馬場: 京都, レース番号: 01</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>11</td>
+                    <td>マローソ </td>
+                    <td>6</td>
+                    <td>7.08%</td>
+                    <td>0.77</td>
+                    <td>9.2</td>
+                    <td>0.65</td>
+                </tr>
+                
+                <tr class="">
+                    <td>2</td>
+                    <td>メイショウセツゲツ </td>
+                    <td>2</td>
+                    <td>6.90%</td>
+                    <td>1.19</td>
+                    <td>5.8</td>
+                    <td>0.40</td>
+                </tr>
+                
+                <tr class="">
+                    <td>10</td>
+                    <td>ドラゴンガール </td>
+                    <td>10</td>
+                    <td>6.81%</td>
+                    <td>0.36</td>
+                    <td>19.1</td>
+                    <td>1.30</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>シェリルファミーユ </td>
+                    <td>7</td>
+                    <td>6.42%</td>
+                    <td>0.53</td>
+                    <td>12.2</td>
+                    <td>0.78</td>
+                </tr>
+                
+                <tr class="">
+                    <td>1</td>
+                    <td>エルピーゾ </td>
+                    <td>8</td>
+                    <td>6.42%</td>
+                    <td>0.36</td>
+                    <td>17.9</td>
+                    <td>1.15</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 33.64%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>7</td>
+                    <td>マルモジーニー</td>
+                    <td>16</td>
+                    <td>11</td>
+                    <td>119.0</td>
+                    <td>7.15</td>
+                </tr>
+                
+                <tr>
+                    <td>15</td>
+                    <td>アドマイヤアーデル</td>
+                    <td>14</td>
+                    <td>10</td>
+                    <td>49.6</td>
+                    <td>3.03</td>
+                </tr>
+                
+                <tr>
+                    <td>6</td>
+                    <td>ゴールドディガー</td>
+                    <td>13</td>
+                    <td>7</td>
+                    <td>41.2</td>
+                    <td>2.56</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番6を軸に</p><p>馬連: 11-6</p><p>ワイド: 11-6</p><p>馬単: 11-6</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番7番 (期待値: 7.15)</p><p>馬連: 11-2</p><p>三連複: 11-2-10</p><p>ワイド: 11-2, 11-10, 2-10</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="京都" data-race-number="02">
+            <h2>競馬場: 京都, レース番号: 02</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>11</td>
+                    <td>シュネーグロッケン </td>
+                    <td>2</td>
+                    <td>7.06%</td>
+                    <td>1.91</td>
+                    <td>3.7</td>
+                    <td>0.26</td>
+                </tr>
+                
+                <tr class="">
+                    <td>3</td>
+                    <td>リアルサファリ </td>
+                    <td>1</td>
+                    <td>6.88%</td>
+                    <td>1.86</td>
+                    <td>3.7</td>
+                    <td>0.25</td>
+                </tr>
+                
+                <tr class="">
+                    <td>16</td>
+                    <td>パーソナルレコード </td>
+                    <td>3</td>
+                    <td>6.78%</td>
+                    <td>1.54</td>
+                    <td>4.4</td>
+                    <td>0.30</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>15</td>
+                    <td>チョウハチ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>16</td>
+                    <td>6.59%</td>
+                    <td>0.03</td>
+                    <td>194.6</td>
+                    <td>12.82</td>
+                </tr>
+                
+                <tr class="">
+                    <td>10</td>
+                    <td>パルジファル </td>
+                    <td>7</td>
+                    <td>6.59%</td>
+                    <td>0.22</td>
+                    <td>30.4</td>
+                    <td>2.00</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 33.90%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>15</td>
+                    <td>チョウハチ</td>
+                    <td>16</td>
+                    <td>4</td>
+                    <td>194.6</td>
+                    <td>12.82</td>
+                </tr>
+                
+                <tr>
+                    <td>13</td>
+                    <td>カガセブンスター</td>
+                    <td>15</td>
+                    <td>12</td>
+                    <td>171.7</td>
+                    <td>10.23</td>
+                </tr>
+                
+                <tr>
+                    <td>12</td>
+                    <td>ハッピーダンチャン</td>
+                    <td>12</td>
+                    <td>6</td>
+                    <td>74.8</td>
+                    <td>4.85</td>
+                </tr>
+                
+                <tr>
+                    <td>1</td>
+                    <td>ビモクシュウレイ</td>
+                    <td>11</td>
+                    <td>8</td>
+                    <td>63.4</td>
+                    <td>4.05</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番15を軸に</p><p>馬連: 11-15</p><p>ワイド: 11-15</p><p>馬単: 11-15</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番15番 (期待値: 12.82)</p><p>馬連: 11-3</p><p>三連複: 11-3-16</p><p>ワイド: 11-3, 11-16, 3-16</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="京都" data-race-number="03">
+            <h2>競馬場: 京都, レース番号: 03</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>16</td>
+                    <td>バイアビリティ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>16</td>
+                    <td>6.02%</td>
+                    <td>0.09</td>
+                    <td>67.7</td>
+                    <td>4.08</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>4</td>
+                    <td>シオーグ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>9</td>
+                    <td>5.83%</td>
+                    <td>0.19</td>
+                    <td>30.0</td>
+                    <td>1.75</td>
+                </tr>
+                
+                <tr class="">
+                    <td>2</td>
+                    <td>ビップディラン </td>
+                    <td>1</td>
+                    <td>5.83%</td>
+                    <td>2.78</td>
+                    <td>2.1</td>
+                    <td>0.12</td>
+                </tr>
+                
+                <tr class="">
+                    <td>15</td>
+                    <td>ウインロゼライト </td>
+                    <td>7</td>
+                    <td>5.74%</td>
+                    <td>0.27</td>
+                    <td>21.6</td>
+                    <td>1.24</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>18</td>
+                    <td>モズプリヴェール <span class="dark-horse-marker">★穴!</span></td>
+                    <td>11</td>
+                    <td>5.64%</td>
+                    <td>0.16</td>
+                    <td>35.8</td>
+                    <td>2.02</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 29.06%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>14</td>
+                    <td>セルリアンドロップ</td>
+                    <td>18</td>
+                    <td>6</td>
+                    <td>103.5</td>
+                    <td>5.84</td>
+                </tr>
+                
+                <tr>
+                    <td>5</td>
+                    <td>チャットケリー</td>
+                    <td>17</td>
+                    <td>11</td>
+                    <td>95.5</td>
+                    <td>5.29</td>
+                </tr>
+                
+                <tr>
+                    <td>16</td>
+                    <td>バイアビリティ</td>
+                    <td>16</td>
+                    <td>1</td>
+                    <td>67.7</td>
+                    <td>4.08</td>
+                </tr>
+                
+                <tr>
+                    <td>18</td>
+                    <td>モズプリヴェール</td>
+                    <td>11</td>
+                    <td>5</td>
+                    <td>35.8</td>
+                    <td>2.02</td>
+                </tr>
+                
+                <tr>
+                    <td>4</td>
+                    <td>シオーグ</td>
+                    <td>9</td>
+                    <td>2</td>
+                    <td>30.0</td>
+                    <td>1.75</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番16を軸に</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番14番 (期待値: 5.84)</p><p>馬連: 16-4</p><p>三連複: 16-4-2</p><p>ワイド: 16-4, 16-2, 4-2</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="京都" data-race-number="05">
+            <h2>競馬場: 京都, レース番号: 05</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>7</td>
+                    <td>ヴォイスオブゼウス </td>
+                    <td>1</td>
+                    <td>7.98%</td>
+                    <td>2.22</td>
+                    <td>3.6</td>
+                    <td>0.29</td>
+                </tr>
+                
+                <tr class="">
+                    <td>13</td>
+                    <td>リアライズルークス </td>
+                    <td>9</td>
+                    <td>7.74%</td>
+                    <td>0.50</td>
+                    <td>15.6</td>
+                    <td>1.21</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>5</td>
+                    <td>アルクドラ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>14</td>
+                    <td>7.49%</td>
+                    <td>0.11</td>
+                    <td>67.3</td>
+                    <td>5.04</td>
+                </tr>
+                
+                <tr class="">
+                    <td>3</td>
+                    <td>サイモンイロハニー </td>
+                    <td>5</td>
+                    <td>7.49%</td>
+                    <td>0.55</td>
+                    <td>13.7</td>
+                    <td>1.03</td>
+                </tr>
+                
+                <tr class="">
+                    <td>6</td>
+                    <td>キーチファイター </td>
+                    <td>7</td>
+                    <td>7.37%</td>
+                    <td>0.51</td>
+                    <td>14.5</td>
+                    <td>1.07</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 38.07%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>5</td>
+                    <td>アルクドラ</td>
+                    <td>14</td>
+                    <td>3</td>
+                    <td>67.3</td>
+                    <td>5.04</td>
+                </tr>
+                
+                <tr>
+                    <td>4</td>
+                    <td>デルマレッドスター</td>
+                    <td>13</td>
+                    <td>10</td>
+                    <td>63.9</td>
+                    <td>4.46</td>
+                </tr>
+                
+                <tr>
+                    <td>8</td>
+                    <td>キタノロジック</td>
+                    <td>12</td>
+                    <td>9</td>
+                    <td>55.6</td>
+                    <td>4.02</td>
+                </tr>
+                
+                <tr>
+                    <td>10</td>
+                    <td>ダノンポセイドン</td>
+                    <td>11</td>
+                    <td>8</td>
+                    <td>21.6</td>
+                    <td>1.56</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番5を軸に</p><p>馬連: 7-5</p><p>ワイド: 7-5</p><p>馬単: 7-5</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番5番 (期待値: 5.04)</p><p>馬連: 7-13</p><p>馬単: 7-13</p><p>三連複: 7-13-5</p><p>ワイド: 7-13, 7-5, 13-5</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="京都" data-race-number="06">
+            <h2>競馬場: 京都, レース番号: 06</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>1</td>
+                    <td>ユウトザユウト </td>
+                    <td>1</td>
+                    <td>11.21%</td>
+                    <td>3.40</td>
+                    <td>3.3</td>
+                    <td>0.37</td>
+                </tr>
+                
+                <tr class="">
+                    <td>4</td>
+                    <td>ゲッティヴィラ </td>
+                    <td>3</td>
+                    <td>11.21%</td>
+                    <td>2.55</td>
+                    <td>4.4</td>
+                    <td>0.49</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>パヴィーア </td>
+                    <td>4</td>
+                    <td>11.09%</td>
+                    <td>2.05</td>
+                    <td>5.4</td>
+                    <td>0.60</td>
+                </tr>
+                
+                <tr class="">
+                    <td>5</td>
+                    <td>キュードス </td>
+                    <td>6</td>
+                    <td>10.18%</td>
+                    <td>0.56</td>
+                    <td>18.2</td>
+                    <td>1.85</td>
+                </tr>
+                
+                <tr class="">
+                    <td>7</td>
+                    <td>ツーピース </td>
+                    <td>5</td>
+                    <td>10.04%</td>
+                    <td>1.14</td>
+                    <td>8.8</td>
+                    <td>0.88</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 53.72%</p>
+        
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番9番 (期待値: 6.74)</p><p>馬連: 1-4</p><p>三連複: 1-4-8</p><p>ワイド: 1-4, 1-8, 4-8</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="京都" data-race-number="07">
+            <h2>競馬場: 京都, レース番号: 07</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>1</td>
+                    <td>アレンテージョ </td>
+                    <td>1</td>
+                    <td>11.44%</td>
+                    <td>3.01</td>
+                    <td>3.8</td>
+                    <td>0.43</td>
+                </tr>
+                
+                <tr class="">
+                    <td>10</td>
+                    <td>パシフィックハイ </td>
+                    <td>4</td>
+                    <td>11.03%</td>
+                    <td>1.93</td>
+                    <td>5.7</td>
+                    <td>0.63</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>ジーティームソウ </td>
+                    <td>2</td>
+                    <td>10.88%</td>
+                    <td>2.59</td>
+                    <td>4.2</td>
+                    <td>0.46</td>
+                </tr>
+                
+                <tr class="">
+                    <td>9</td>
+                    <td>タガノヘラクレス </td>
+                    <td>6</td>
+                    <td>10.44%</td>
+                    <td>0.99</td>
+                    <td>10.5</td>
+                    <td>1.10</td>
+                </tr>
+                
+                <tr class="">
+                    <td>2</td>
+                    <td>ヤマニンアラクリア </td>
+                    <td>7</td>
+                    <td>10.12%</td>
+                    <td>0.71</td>
+                    <td>14.2</td>
+                    <td>1.44</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 53.91%</p>
+        
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番3番 (期待値: 8.23)</p><p>馬連: 1-10</p><p>三連複: 1-10-8</p><p>ワイド: 1-10, 1-8, 10-8</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="京都" data-race-number="08">
+            <h2>競馬場: 京都, レース番号: 08</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>7</td>
+                    <td>ネロコルヴィーノ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>8</td>
+                    <td>9.43%</td>
+                    <td>0.49</td>
+                    <td>19.3</td>
+                    <td>1.82</td>
+                </tr>
+                
+                <tr class="">
+                    <td>5</td>
+                    <td>ウィンターガーデン </td>
+                    <td>4</td>
+                    <td>9.32%</td>
+                    <td>0.89</td>
+                    <td>10.5</td>
+                    <td>0.98</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>1</td>
+                    <td>イーサンハンター <span class="dark-horse-marker">★穴!</span></td>
+                    <td>11</td>
+                    <td>8.58%</td>
+                    <td>0.10</td>
+                    <td>85.4</td>
+                    <td>7.32</td>
+                </tr>
+                
+                <tr class="">
+                    <td>12</td>
+                    <td>ブーヤカ </td>
+                    <td>2</td>
+                    <td>8.58%</td>
+                    <td>1.02</td>
+                    <td>8.4</td>
+                    <td>0.72</td>
+                </tr>
+                
+                <tr class="">
+                    <td>10</td>
+                    <td>ミッションルース </td>
+                    <td>6</td>
+                    <td>8.44%</td>
+                    <td>0.57</td>
+                    <td>14.8</td>
+                    <td>1.25</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 44.34%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>イーサンハンター</td>
+                    <td>11</td>
+                    <td>3</td>
+                    <td>85.4</td>
+                    <td>7.32</td>
+                </tr>
+                
+                <tr>
+                    <td>7</td>
+                    <td>ネロコルヴィーノ</td>
+                    <td>8</td>
+                    <td>1</td>
+                    <td>19.3</td>
+                    <td>1.82</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番7を軸に</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番11番 (期待値: 8.48)</p><p>馬連: 7-5</p><p>三連複: 7-5-1</p><p>ワイド: 7-5, 7-1, 5-1</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="京都" data-race-number="09">
+            <h2>競馬場: 京都, レース番号: 09</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>7</td>
+                    <td>モモンウールー </td>
+                    <td>4</td>
+                    <td>14.60%</td>
+                    <td>2.25</td>
+                    <td>6.5</td>
+                    <td>0.95</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>ナイトスラッガー </td>
+                    <td>2</td>
+                    <td>14.09%</td>
+                    <td>3.13</td>
+                    <td>4.5</td>
+                    <td>0.63</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>1</td>
+                    <td>バガン <span class="dark-horse-marker">★穴!</span></td>
+                    <td>8</td>
+                    <td>13.36%</td>
+                    <td>1.00</td>
+                    <td>13.3</td>
+                    <td>1.78</td>
+                </tr>
+                
+                <tr class="">
+                    <td>3</td>
+                    <td>フォーチュンコード </td>
+                    <td>5</td>
+                    <td>12.97%</td>
+                    <td>1.47</td>
+                    <td>8.8</td>
+                    <td>1.14</td>
+                </tr>
+                
+                <tr class="">
+                    <td>6</td>
+                    <td>エルディアブロ </td>
+                    <td>3</td>
+                    <td>12.97%</td>
+                    <td>2.76</td>
+                    <td>4.7</td>
+                    <td>0.61</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 68.00%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>バガン</td>
+                    <td>8</td>
+                    <td>3</td>
+                    <td>13.3</td>
+                    <td>1.78</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番1を軸に</p><p>馬連: 7-1</p><p>ワイド: 7-1</p><p>馬単: 7-1</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>馬連: 7-8</p><p>三連複: 7-8-1</p><p>ワイド: 7-8, 7-1, 8-1</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="京都" data-race-number="10">
+            <h2>競馬場: 京都, レース番号: 10</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>6</td>
+                    <td>ブルーミンデザイン </td>
+                    <td>8</td>
+                    <td>7.07%</td>
+                    <td>0.53</td>
+                    <td>13.4</td>
+                    <td>0.95</td>
+                </tr>
+                
+                <tr class="">
+                    <td>2</td>
+                    <td>スイープアワーズ </td>
+                    <td>2</td>
+                    <td>7.00%</td>
+                    <td>1.19</td>
+                    <td>5.9</td>
+                    <td>0.41</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>15</td>
+                    <td>ノーブルスカイ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>13</td>
+                    <td>6.75%</td>
+                    <td>0.14</td>
+                    <td>49.3</td>
+                    <td>3.33</td>
+                </tr>
+                
+                <tr class="">
+                    <td>7</td>
+                    <td>ベラジオボンド </td>
+                    <td>1</td>
+                    <td>6.48%</td>
+                    <td>2.09</td>
+                    <td>3.1</td>
+                    <td>0.20</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>8</td>
+                    <td>カヨウネンカ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>10</td>
+                    <td>6.38%</td>
+                    <td>0.25</td>
+                    <td>25.6</td>
+                    <td>1.63</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 33.68%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>9</td>
+                    <td>エアミアーニ</td>
+                    <td>14</td>
+                    <td>9</td>
+                    <td>64.2</td>
+                    <td>3.91</td>
+                </tr>
+                
+                <tr>
+                    <td>15</td>
+                    <td>ノーブルスカイ</td>
+                    <td>13</td>
+                    <td>3</td>
+                    <td>49.3</td>
+                    <td>3.33</td>
+                </tr>
+                
+                <tr>
+                    <td>4</td>
+                    <td>シーウィザード</td>
+                    <td>11</td>
+                    <td>6</td>
+                    <td>37.9</td>
+                    <td>2.38</td>
+                </tr>
+                
+                <tr>
+                    <td>8</td>
+                    <td>カヨウネンカ</td>
+                    <td>10</td>
+                    <td>5</td>
+                    <td>25.6</td>
+                    <td>1.63</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番15を軸に</p><p>馬連: 6-15</p><p>ワイド: 6-15</p><p>馬単: 6-15</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番13番 (期待値: 10.51)</p><p>馬連: 6-2</p><p>三連複: 6-2-15</p><p>ワイド: 6-2, 6-15, 2-15</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="京都" data-race-number="11">
+            <h2>競馬場: 京都, レース番号: 11</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>2</td>
+                    <td>ニホンピロキーフ </td>
+                    <td>3</td>
+                    <td>11.01%</td>
+                    <td>1.90</td>
+                    <td>5.8</td>
+                    <td>0.64</td>
+                </tr>
+                
+                <tr class="">
+                    <td>3</td>
+                    <td>ジュンブロッサム </td>
+                    <td>1</td>
+                    <td>11.01%</td>
+                    <td>5.00</td>
+                    <td>2.2</td>
+                    <td>0.24</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>セオ </td>
+                    <td>2</td>
+                    <td>10.87%</td>
+                    <td>2.26</td>
+                    <td>4.8</td>
+                    <td>0.52</td>
+                </tr>
+                
+                <tr class="">
+                    <td>9</td>
+                    <td>レイベリング </td>
+                    <td>6</td>
+                    <td>10.57%</td>
+                    <td>0.55</td>
+                    <td>19.2</td>
+                    <td>2.03</td>
+                </tr>
+                
+                <tr class="">
+                    <td>5</td>
+                    <td>エアファンディタ </td>
+                    <td>7</td>
+                    <td>9.62%</td>
+                    <td>0.44</td>
+                    <td>22.1</td>
+                    <td>2.13</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 53.08%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>7</td>
+                    <td>グラティアス</td>
+                    <td>10</td>
+                    <td>6</td>
+                    <td>32.3</td>
+                    <td>3.11</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番7を軸に</p><p>馬連: 2-7</p><p>ワイド: 2-7</p><p>馬単: 2-7</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番7番 (期待値: 3.11)</p><p>馬連: 2-3</p><p>三連複: 2-3-8</p><p>ワイド: 2-3, 2-8, 3-8</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="京都" data-race-number="12">
+            <h2>競馬場: 京都, レース番号: 12</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>5</td>
+                    <td>スマートリアファル </td>
+                    <td>2</td>
+                    <td>9.35%</td>
+                    <td>1.44</td>
+                    <td>6.5</td>
+                    <td>0.61</td>
+                </tr>
+                
+                <tr class="">
+                    <td>7</td>
+                    <td>クリノフィガロ </td>
+                    <td>5</td>
+                    <td>9.06%</td>
+                    <td>0.82</td>
+                    <td>11.1</td>
+                    <td>1.01</td>
+                </tr>
+                
+                <tr class="">
+                    <td>12</td>
+                    <td>タマモキャリコ </td>
+                    <td>4</td>
+                    <td>8.96%</td>
+                    <td>1.02</td>
+                    <td>8.8</td>
+                    <td>0.79</td>
+                </tr>
+                
+                <tr class="">
+                    <td>9</td>
+                    <td>エアサンサーラ </td>
+                    <td>3</td>
+                    <td>8.64%</td>
+                    <td>1.33</td>
+                    <td>6.5</td>
+                    <td>0.56</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>ワイドブリザード </td>
+                    <td>1</td>
+                    <td>8.53%</td>
+                    <td>2.30</td>
+                    <td>3.7</td>
+                    <td>0.32</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 44.54%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>4</td>
+                    <td>マサハヤウォルズ</td>
+                    <td>12</td>
+                    <td>8</td>
+                    <td>59.5</td>
+                    <td>4.87</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番4を軸に</p><p>馬連: 5-4</p><p>ワイド: 5-4</p><p>馬単: 5-4</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番4番 (期待値: 4.87)</p><p>馬連: 5-7</p><p>三連複: 5-7-12</p><p>ワイド: 5-7, 5-12, 7-12</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="01">
+            <h2>競馬場: 東京, レース番号: 01</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>3</td>
+                    <td>アッサジャン </td>
+                    <td>6</td>
+                    <td>6.68%</td>
+                    <td>0.48</td>
+                    <td>14.0</td>
+                    <td>0.93</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>9</td>
+                    <td>パッヘルベルカノン <span class="dark-horse-marker">★穴!</span></td>
+                    <td>13</td>
+                    <td>6.58%</td>
+                    <td>0.09</td>
+                    <td>76.2</td>
+                    <td>5.01</td>
+                </tr>
+                
+                <tr class="">
+                    <td>7</td>
+                    <td>アイスリーディング </td>
+                    <td>5</td>
+                    <td>6.58%</td>
+                    <td>0.51</td>
+                    <td>12.9</td>
+                    <td>0.85</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>15</td>
+                    <td>アレナトーレ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>10</td>
+                    <td>6.48%</td>
+                    <td>0.14</td>
+                    <td>47.6</td>
+                    <td>3.09</td>
+                </tr>
+                
+                <tr class="">
+                    <td>16</td>
+                    <td>スフレ </td>
+                    <td>7</td>
+                    <td>6.48%</td>
+                    <td>0.44</td>
+                    <td>14.7</td>
+                    <td>0.95</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 32.80%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>11</td>
+                    <td>ラヴィーズドリーム</td>
+                    <td>15</td>
+                    <td>8</td>
+                    <td>141.3</td>
+                    <td>8.88</td>
+                </tr>
+                
+                <tr>
+                    <td>2</td>
+                    <td>ガールネクストドア</td>
+                    <td>14</td>
+                    <td>7</td>
+                    <td>93.2</td>
+                    <td>5.95</td>
+                </tr>
+                
+                <tr>
+                    <td>9</td>
+                    <td>パッヘルベルカノン</td>
+                    <td>13</td>
+                    <td>2</td>
+                    <td>76.2</td>
+                    <td>5.01</td>
+                </tr>
+                
+                <tr>
+                    <td>5</td>
+                    <td>フランシナテソーロ</td>
+                    <td>12</td>
+                    <td>9</td>
+                    <td>75.5</td>
+                    <td>4.74</td>
+                </tr>
+                
+                <tr>
+                    <td>15</td>
+                    <td>アレナトーレ</td>
+                    <td>10</td>
+                    <td>4</td>
+                    <td>47.6</td>
+                    <td>3.09</td>
+                </tr>
+                
+                <tr>
+                    <td>1</td>
+                    <td>アヤチャンス</td>
+                    <td>9</td>
+                    <td>6</td>
+                    <td>32.8</td>
+                    <td>2.09</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番9を軸に</p><p>馬連: 3-9</p><p>ワイド: 3-9</p><p>馬単: 3-9</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番11番 (期待値: 8.88)</p><p>馬連: 3-9</p><p>馬単: 3-9</p><p>三連複: 3-9-7</p><p>ワイド: 3-9, 3-7, 9-7</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="02">
+            <h2>競馬場: 東京, レース番号: 02</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>7</td>
+                    <td>トキノカンピオーネ </td>
+                    <td>5</td>
+                    <td>7.60%</td>
+                    <td>0.61</td>
+                    <td>12.4</td>
+                    <td>0.94</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>10</td>
+                    <td>ダノンメナージュ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>15</td>
+                    <td>6.76%</td>
+                    <td>0.12</td>
+                    <td>57.2</td>
+                    <td>3.87</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>15</td>
+                    <td>ウエスタンクリス <span class="dark-horse-marker">★穴!</span></td>
+                    <td>13</td>
+                    <td>6.44%</td>
+                    <td>0.11</td>
+                    <td>56.5</td>
+                    <td>3.64</td>
+                </tr>
+                
+                <tr class="">
+                    <td>2</td>
+                    <td>アルテボーイ </td>
+                    <td>1</td>
+                    <td>6.33%</td>
+                    <td>1.86</td>
+                    <td>3.4</td>
+                    <td>0.22</td>
+                </tr>
+                
+                <tr class="">
+                    <td>4</td>
+                    <td>テソリーノ </td>
+                    <td>4</td>
+                    <td>6.22%</td>
+                    <td>0.74</td>
+                    <td>8.4</td>
+                    <td>0.52</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 33.36%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>10</td>
+                    <td>ダノンメナージュ</td>
+                    <td>15</td>
+                    <td>2</td>
+                    <td>57.2</td>
+                    <td>3.87</td>
+                </tr>
+                
+                <tr>
+                    <td>11</td>
+                    <td>グレイグアン</td>
+                    <td>16</td>
+                    <td>11</td>
+                    <td>59.6</td>
+                    <td>3.71</td>
+                </tr>
+                
+                <tr>
+                    <td>15</td>
+                    <td>ウエスタンクリス</td>
+                    <td>13</td>
+                    <td>3</td>
+                    <td>56.5</td>
+                    <td>3.64</td>
+                </tr>
+                
+                <tr>
+                    <td>5</td>
+                    <td>アバレリュウ</td>
+                    <td>14</td>
+                    <td>9</td>
+                    <td>57.2</td>
+                    <td>3.56</td>
+                </tr>
+                
+                <tr>
+                    <td>8</td>
+                    <td>オイナリサン</td>
+                    <td>12</td>
+                    <td>8</td>
+                    <td>53.0</td>
+                    <td>3.30</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番10を軸に</p><p>馬連: 7-10</p><p>ワイド: 7-10</p><p>馬単: 7-10</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番10番 (期待値: 3.87)</p><p>馬連: 7-10</p><p>馬単: 7-10</p><p>三連複: 7-10-15</p><p>ワイド: 7-10, 7-15, 10-15</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="03">
+            <h2>競馬場: 東京, レース番号: 03</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>15</td>
+                    <td>エンジョイドライブ </td>
+                    <td>2</td>
+                    <td>7.52%</td>
+                    <td>1.75</td>
+                    <td>4.3</td>
+                    <td>0.32</td>
+                </tr>
+                
+                <tr class="">
+                    <td>10</td>
+                    <td>ガンハンマー </td>
+                    <td>1</td>
+                    <td>7.32%</td>
+                    <td>3.49</td>
+                    <td>2.1</td>
+                    <td>0.15</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>エムティエスターテ </td>
+                    <td>4</td>
+                    <td>7.32%</td>
+                    <td>0.70</td>
+                    <td>10.4</td>
+                    <td>0.76</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>5</td>
+                    <td>ピースシャイニー <span class="dark-horse-marker">★穴!</span></td>
+                    <td>11</td>
+                    <td>7.01%</td>
+                    <td>0.23</td>
+                    <td>30.4</td>
+                    <td>2.13</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>13</td>
+                    <td>キャバリエクエスト <span class="dark-horse-marker">★穴!</span></td>
+                    <td>15</td>
+                    <td>6.90%</td>
+                    <td>0.06</td>
+                    <td>118.6</td>
+                    <td>8.19</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 36.08%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>13</td>
+                    <td>キャバリエクエスト</td>
+                    <td>15</td>
+                    <td>5</td>
+                    <td>118.6</td>
+                    <td>8.19</td>
+                </tr>
+                
+                <tr>
+                    <td>9</td>
+                    <td>ピチクリ</td>
+                    <td>14</td>
+                    <td>6</td>
+                    <td>75.5</td>
+                    <td>5.13</td>
+                </tr>
+                
+                <tr>
+                    <td>5</td>
+                    <td>ピースシャイニー</td>
+                    <td>11</td>
+                    <td>4</td>
+                    <td>30.4</td>
+                    <td>2.13</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番5を軸に</p><p>馬連: 15-5</p><p>ワイド: 15-5</p><p>馬単: 15-5</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番13番 (期待値: 8.19)</p><p>馬連: 15-10</p><p>三連複: 15-10-8</p><p>ワイド: 15-10, 15-8, 10-8</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="04">
+            <h2>競馬場: 東京, レース番号: 04</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>5</td>
+                    <td>エオアリイ </td>
+                    <td>4</td>
+                    <td>10.16%</td>
+                    <td>1.19</td>
+                    <td>8.5</td>
+                    <td>0.86</td>
+                </tr>
+                
+                <tr class="">
+                    <td>2</td>
+                    <td>ムーンストラック </td>
+                    <td>3</td>
+                    <td>10.02%</td>
+                    <td>1.50</td>
+                    <td>6.7</td>
+                    <td>0.67</td>
+                </tr>
+                
+                <tr class="">
+                    <td>11</td>
+                    <td>レヴーズマン </td>
+                    <td>1</td>
+                    <td>9.74%</td>
+                    <td>4.87</td>
+                    <td>2.0</td>
+                    <td>0.19</td>
+                </tr>
+                
+                <tr class="">
+                    <td>9</td>
+                    <td>イフルジャンス </td>
+                    <td>2</td>
+                    <td>9.74%</td>
+                    <td>1.48</td>
+                    <td>6.6</td>
+                    <td>0.64</td>
+                </tr>
+                
+                <tr class="">
+                    <td>10</td>
+                    <td>メイショウアゴナス </td>
+                    <td>6</td>
+                    <td>9.45%</td>
+                    <td>0.86</td>
+                    <td>11.0</td>
+                    <td>1.04</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 49.10%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>3</td>
+                    <td>ギフテッドブラック</td>
+                    <td>10</td>
+                    <td>7</td>
+                    <td>64.3</td>
+                    <td>5.58</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番3を軸に</p><p>馬連: 5-3</p><p>ワイド: 5-3</p><p>馬単: 5-3</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番6番 (期待値: 7.03)</p><p>馬連: 5-2</p><p>三連複: 5-2-11</p><p>ワイド: 5-2, 5-11, 2-11</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="05">
+            <h2>競馬場: 東京, レース番号: 05</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>13</td>
+                    <td>キアラメンテ </td>
+                    <td>2</td>
+                    <td>9.03%</td>
+                    <td>1.35</td>
+                    <td>6.7</td>
+                    <td>0.61</td>
+                </tr>
+                
+                <tr class="">
+                    <td>11</td>
+                    <td>コスモグラニット </td>
+                    <td>6</td>
+                    <td>8.01%</td>
+                    <td>0.47</td>
+                    <td>17.2</td>
+                    <td>1.38</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>アールヴィヴァン </td>
+                    <td>1</td>
+                    <td>8.01%</td>
+                    <td>4.71</td>
+                    <td>1.7</td>
+                    <td>0.14</td>
+                </tr>
+                
+                <tr class="">
+                    <td>12</td>
+                    <td>メジャーアピール </td>
+                    <td>5</td>
+                    <td>7.79%</td>
+                    <td>0.61</td>
+                    <td>12.7</td>
+                    <td>0.99</td>
+                </tr>
+                
+                <tr class="">
+                    <td>4</td>
+                    <td>ベアリミッション </td>
+                    <td>4</td>
+                    <td>7.45%</td>
+                    <td>0.68</td>
+                    <td>11.0</td>
+                    <td>0.82</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 40.28%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>10</td>
+                    <td>テルケンレングレー</td>
+                    <td>14</td>
+                    <td>9</td>
+                    <td>151.1</td>
+                    <td>9.95</td>
+                </tr>
+                
+                <tr>
+                    <td>14</td>
+                    <td>エメラルドラグーン</td>
+                    <td>12</td>
+                    <td>6</td>
+                    <td>91.5</td>
+                    <td>6.71</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番14を軸に</p><p>馬連: 13-14</p><p>ワイド: 13-14</p><p>馬単: 13-14</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番10番 (期待値: 9.95)</p><p>馬連: 13-11</p><p>馬単: 13-11</p><p>三連複: 13-11-8</p><p>ワイド: 13-11, 13-8, 11-8</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="06">
+            <h2>競馬場: 東京, レース番号: 06</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>5</td>
+                    <td>カザンラク </td>
+                    <td>1</td>
+                    <td>12.94%</td>
+                    <td>5.88</td>
+                    <td>2.2</td>
+                    <td>0.28</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>ルパヴィヨン </td>
+                    <td>4</td>
+                    <td>12.32%</td>
+                    <td>0.97</td>
+                    <td>12.7</td>
+                    <td>1.57</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>1</td>
+                    <td>エンペラーズソード <span class="dark-horse-marker">★穴!</span></td>
+                    <td>6</td>
+                    <td>11.62%</td>
+                    <td>0.58</td>
+                    <td>20.1</td>
+                    <td>2.34</td>
+                </tr>
+                
+                <tr class="">
+                    <td>9</td>
+                    <td>フィリップバローズ </td>
+                    <td>5</td>
+                    <td>11.00%</td>
+                    <td>0.71</td>
+                    <td>15.5</td>
+                    <td>1.70</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>4</td>
+                    <td>ニシノヒナアラレ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>9</td>
+                    <td>11.00%</td>
+                    <td>0.30</td>
+                    <td>37.2</td>
+                    <td>4.09</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 58.88%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>4</td>
+                    <td>ニシノヒナアラレ</td>
+                    <td>9</td>
+                    <td>5</td>
+                    <td>37.2</td>
+                    <td>4.09</td>
+                </tr>
+                
+                <tr>
+                    <td>1</td>
+                    <td>エンペラーズソード</td>
+                    <td>6</td>
+                    <td>3</td>
+                    <td>20.1</td>
+                    <td>2.34</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番1を軸に</p><p>馬連: 5-1</p><p>ワイド: 5-1</p><p>馬単: 5-1</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番4番 (期待値: 4.09)</p><p>馬連: 5-8</p><p>馬単: 5-8</p><p>三連複: 5-8-1</p><p>ワイド: 5-8, 5-1, 8-1</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="07">
+            <h2>競馬場: 東京, レース番号: 07</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>2</td>
+                    <td>ホワイトクロウ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>8</td>
+                    <td>8.08%</td>
+                    <td>0.37</td>
+                    <td>21.7</td>
+                    <td>1.75</td>
+                </tr>
+                
+                <tr class="">
+                    <td>12</td>
+                    <td>ネオシルバー </td>
+                    <td>4</td>
+                    <td>7.97%</td>
+                    <td>0.47</td>
+                    <td>17.1</td>
+                    <td>1.36</td>
+                </tr>
+                
+                <tr class="">
+                    <td>6</td>
+                    <td>インテルメディオ </td>
+                    <td>3</td>
+                    <td>7.97%</td>
+                    <td>0.74</td>
+                    <td>10.7</td>
+                    <td>0.85</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>7</td>
+                    <td>ライングッドマン <span class="dark-horse-marker">★穴!</span></td>
+                    <td>12</td>
+                    <td>7.74%</td>
+                    <td>0.08</td>
+                    <td>98.3</td>
+                    <td>7.61</td>
+                </tr>
+                
+                <tr class="">
+                    <td>3</td>
+                    <td>ニシノアウェイク </td>
+                    <td>6</td>
+                    <td>7.25%</td>
+                    <td>0.39</td>
+                    <td>18.6</td>
+                    <td>1.35</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 39.01%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>スラーヴァ</td>
+                    <td>13</td>
+                    <td>10</td>
+                    <td>133.4</td>
+                    <td>9.33</td>
+                </tr>
+                
+                <tr>
+                    <td>7</td>
+                    <td>ライングッドマン</td>
+                    <td>12</td>
+                    <td>4</td>
+                    <td>98.3</td>
+                    <td>7.61</td>
+                </tr>
+                
+                <tr>
+                    <td>2</td>
+                    <td>ホワイトクロウ</td>
+                    <td>8</td>
+                    <td>1</td>
+                    <td>21.7</td>
+                    <td>1.75</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番2を軸に</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番1番 (期待値: 9.33)</p><p>馬連: 2-12</p><p>三連複: 2-12-6</p><p>ワイド: 2-12, 2-6, 12-6</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="08">
+            <h2>競馬場: 東京, レース番号: 08</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>10</td>
+                    <td>シンバーシア </td>
+                    <td>1</td>
+                    <td>8.59%</td>
+                    <td>2.10</td>
+                    <td>4.1</td>
+                    <td>0.35</td>
+                </tr>
+                
+                <tr class="">
+                    <td>14</td>
+                    <td>メイショウピース </td>
+                    <td>3</td>
+                    <td>8.42%</td>
+                    <td>1.12</td>
+                    <td>7.5</td>
+                    <td>0.63</td>
+                </tr>
+                
+                <tr class="">
+                    <td>7</td>
+                    <td>サクラオーラ </td>
+                    <td>6</td>
+                    <td>7.51%</td>
+                    <td>0.80</td>
+                    <td>9.4</td>
+                    <td>0.71</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>13</td>
+                    <td>マルプリ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>11</td>
+                    <td>7.40%</td>
+                    <td>0.34</td>
+                    <td>21.9</td>
+                    <td>1.62</td>
+                </tr>
+                
+                <tr class="">
+                    <td>2</td>
+                    <td>アニトラ </td>
+                    <td>7</td>
+                    <td>7.40%</td>
+                    <td>0.64</td>
+                    <td>11.5</td>
+                    <td>0.85</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 39.33%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>11</td>
+                    <td>ラッジオ</td>
+                    <td>14</td>
+                    <td>10</td>
+                    <td>54.7</td>
+                    <td>3.59</td>
+                </tr>
+                
+                <tr>
+                    <td>4</td>
+                    <td>ロゼクラン</td>
+                    <td>13</td>
+                    <td>9</td>
+                    <td>27.9</td>
+                    <td>1.94</td>
+                </tr>
+                
+                <tr>
+                    <td>12</td>
+                    <td>コスモディナー</td>
+                    <td>12</td>
+                    <td>7</td>
+                    <td>24.3</td>
+                    <td>1.71</td>
+                </tr>
+                
+                <tr>
+                    <td>13</td>
+                    <td>マルプリ</td>
+                    <td>11</td>
+                    <td>4</td>
+                    <td>21.9</td>
+                    <td>1.62</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番13を軸に</p><p>馬連: 10-13</p><p>ワイド: 10-13</p><p>馬単: 10-13</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番11番 (期待値: 3.59)</p><p>馬連: 10-14</p><p>三連複: 10-14-7</p><p>ワイド: 10-14, 10-7, 14-7</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="09">
+            <h2>競馬場: 東京, レース番号: 09</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>6</td>
+                    <td>コスモアディラート <span class="dark-horse-marker">★穴!</span></td>
+                    <td>13</td>
+                    <td>7.38%</td>
+                    <td>0.19</td>
+                    <td>38.5</td>
+                    <td>2.84</td>
+                </tr>
+                
+                <tr class="">
+                    <td>10</td>
+                    <td>レッドシュヴェルト </td>
+                    <td>2</td>
+                    <td>7.30%</td>
+                    <td>1.74</td>
+                    <td>4.2</td>
+                    <td>0.31</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>イサチルシーサイド </td>
+                    <td>5</td>
+                    <td>7.21%</td>
+                    <td>0.50</td>
+                    <td>14.4</td>
+                    <td>1.04</td>
+                </tr>
+                
+                <tr class="">
+                    <td>15</td>
+                    <td>オメガウインク </td>
+                    <td>3</td>
+                    <td>7.12%</td>
+                    <td>1.55</td>
+                    <td>4.6</td>
+                    <td>0.33</td>
+                </tr>
+                
+                <tr class="">
+                    <td>11</td>
+                    <td>ヴェサリウス </td>
+                    <td>4</td>
+                    <td>7.12%</td>
+                    <td>0.77</td>
+                    <td>9.3</td>
+                    <td>0.66</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 36.12%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>2</td>
+                    <td>ドーバーホーク</td>
+                    <td>14</td>
+                    <td>9</td>
+                    <td>75.2</td>
+                    <td>5.07</td>
+                </tr>
+                
+                <tr>
+                    <td>6</td>
+                    <td>コスモアディラート</td>
+                    <td>13</td>
+                    <td>1</td>
+                    <td>38.5</td>
+                    <td>2.84</td>
+                </tr>
+                
+                <tr>
+                    <td>5</td>
+                    <td>ハピネスアゲン</td>
+                    <td>12</td>
+                    <td>8</td>
+                    <td>37.6</td>
+                    <td>2.57</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番6を軸に</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番14番 (期待値: 7.40)</p><p>馬連: 6-10</p><p>三連複: 6-10-8</p><p>ワイド: 6-10, 6-8, 10-8</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="10">
+            <h2>競馬場: 東京, レース番号: 10</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>1</td>
+                    <td>バトゥーキ </td>
+                    <td>8</td>
+                    <td>9.26%</td>
+                    <td>0.85</td>
+                    <td>10.9</td>
+                    <td>1.01</td>
+                </tr>
+                
+                <tr class="">
+                    <td>6</td>
+                    <td>バトルクライ </td>
+                    <td>4</td>
+                    <td>8.91%</td>
+                    <td>1.17</td>
+                    <td>7.6</td>
+                    <td>0.68</td>
+                </tr>
+                
+                <tr class="">
+                    <td>7</td>
+                    <td>ハビレ </td>
+                    <td>1</td>
+                    <td>8.79%</td>
+                    <td>1.79</td>
+                    <td>4.9</td>
+                    <td>0.43</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>4</td>
+                    <td>ハチメンロッピ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>10</td>
+                    <td>8.67%</td>
+                    <td>0.43</td>
+                    <td>20.3</td>
+                    <td>1.76</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>12</td>
+                    <td>サンライズジーク <span class="dark-horse-marker">★穴!</span></td>
+                    <td>11</td>
+                    <td>8.67%</td>
+                    <td>0.33</td>
+                    <td>26.1</td>
+                    <td>2.26</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 44.31%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>12</td>
+                    <td>サンライズジーク</td>
+                    <td>11</td>
+                    <td>5</td>
+                    <td>26.1</td>
+                    <td>2.26</td>
+                </tr>
+                
+                <tr>
+                    <td>4</td>
+                    <td>ハチメンロッピ</td>
+                    <td>10</td>
+                    <td>4</td>
+                    <td>20.3</td>
+                    <td>1.76</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番4を軸に</p><p>馬連: 1-4</p><p>ワイド: 1-4</p><p>馬単: 1-4</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番9番 (期待値: 4.05)</p><p>馬連: 1-6</p><p>三連複: 1-6-7</p><p>ワイド: 1-6, 1-7, 6-7</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="11">
+            <h2>競馬場: 東京, レース番号: 11</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>6</td>
+                    <td>ティラトーレ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>10</td>
+                    <td>6.18%</td>
+                    <td>0.22</td>
+                    <td>27.7</td>
+                    <td>1.71</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>1</td>
+                    <td>タガノアビー <span class="dark-horse-marker">★穴!</span></td>
+                    <td>18</td>
+                    <td>5.96%</td>
+                    <td>0.05</td>
+                    <td>122.8</td>
+                    <td>7.31</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>11</td>
+                    <td>ホウオウタイタン <span class="dark-horse-marker">★穴!</span></td>
+                    <td>14</td>
+                    <td>5.96%</td>
+                    <td>0.08</td>
+                    <td>73.8</td>
+                    <td>4.40</td>
+                </tr>
+                
+                <tr class="">
+                    <td>9</td>
+                    <td>ゴーソーファー </td>
+                    <td>2</td>
+                    <td>5.90%</td>
+                    <td>0.94</td>
+                    <td>6.3</td>
+                    <td>0.37</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>14</td>
+                    <td>マイスターヴェルク <span class="dark-horse-marker">★穴!</span></td>
+                    <td>11</td>
+                    <td>5.90%</td>
+                    <td>0.12</td>
+                    <td>50.0</td>
+                    <td>2.95</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 29.89%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>タガノアビー</td>
+                    <td>18</td>
+                    <td>2</td>
+                    <td>122.8</td>
+                    <td>7.31</td>
+                </tr>
+                
+                <tr>
+                    <td>11</td>
+                    <td>ホウオウタイタン</td>
+                    <td>14</td>
+                    <td>3</td>
+                    <td>73.8</td>
+                    <td>4.40</td>
+                </tr>
+                
+                <tr>
+                    <td>8</td>
+                    <td>マーゴットレジーナ</td>
+                    <td>13</td>
+                    <td>10</td>
+                    <td>68.4</td>
+                    <td>3.76</td>
+                </tr>
+                
+                <tr>
+                    <td>14</td>
+                    <td>マイスターヴェルク</td>
+                    <td>11</td>
+                    <td>5</td>
+                    <td>50.0</td>
+                    <td>2.95</td>
+                </tr>
+                
+                <tr>
+                    <td>6</td>
+                    <td>ティラトーレ</td>
+                    <td>10</td>
+                    <td>1</td>
+                    <td>27.7</td>
+                    <td>1.71</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番6を軸に</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番1番 (期待値: 7.31)</p><p>馬連: 6-1</p><p>馬単: 6-1</p><p>三連複: 6-1-11</p><p>ワイド: 6-1, 6-11, 1-11</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="東京" data-race-number="12">
+            <h2>競馬場: 東京, レース番号: 12</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>12</td>
+                    <td>アンドアイラヴハー </td>
+                    <td>2</td>
+                    <td>6.91%</td>
+                    <td>1.33</td>
+                    <td>5.2</td>
+                    <td>0.36</td>
+                </tr>
+                
+                <tr class="">
+                    <td>14</td>
+                    <td>ニシノスピカ </td>
+                    <td>10</td>
+                    <td>6.74%</td>
+                    <td>0.34</td>
+                    <td>20.0</td>
+                    <td>1.35</td>
+                </tr>
+                
+                <tr class="">
+                    <td>3</td>
+                    <td>ハリウッドブルース </td>
+                    <td>9</td>
+                    <td>6.74%</td>
+                    <td>0.47</td>
+                    <td>14.4</td>
+                    <td>0.97</td>
+                </tr>
+                
+                <tr class="">
+                    <td>16</td>
+                    <td>アイファーバトル </td>
+                    <td>3</td>
+                    <td>6.74%</td>
+                    <td>0.77</td>
+                    <td>8.8</td>
+                    <td>0.59</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>2</td>
+                    <td>ヨゾラノムコウニ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>14</td>
+                    <td>6.38%</td>
+                    <td>0.14</td>
+                    <td>45.5</td>
+                    <td>2.90</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 33.52%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>13</td>
+                    <td>トウカイファクター</td>
+                    <td>15</td>
+                    <td>8</td>
+                    <td>87.2</td>
+                    <td>5.40</td>
+                </tr>
+                
+                <tr>
+                    <td>2</td>
+                    <td>ヨゾラノムコウニ</td>
+                    <td>14</td>
+                    <td>5</td>
+                    <td>45.5</td>
+                    <td>2.90</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番2を軸に</p><p>馬連: 12-2</p><p>ワイド: 12-2</p><p>馬単: 12-2</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番8番 (期待値: 6.49)</p><p>馬連: 12-14</p><p>馬単: 12-14</p><p>三連複: 12-14-3</p><p>ワイド: 12-14, 12-3, 14-3</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="01">
+            <h2>競馬場: 福島, レース番号: 01</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>10</td>
+                    <td>ヒタムキ </td>
+                    <td>9</td>
+                    <td>7.06%</td>
+                    <td>0.36</td>
+                    <td>19.6</td>
+                    <td>1.38</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>ベルトネ </td>
+                    <td>5</td>
+                    <td>6.70%</td>
+                    <td>0.85</td>
+                    <td>7.9</td>
+                    <td>0.53</td>
+                </tr>
+                
+                <tr class="">
+                    <td>12</td>
+                    <td>ニッシンゲッポ </td>
+                    <td>8</td>
+                    <td>6.60%</td>
+                    <td>0.37</td>
+                    <td>17.8</td>
+                    <td>1.17</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>14</td>
+                    <td>キャラメリー <span class="dark-horse-marker">★穴!</span></td>
+                    <td>14</td>
+                    <td>6.50%</td>
+                    <td>0.06</td>
+                    <td>107.0</td>
+                    <td>6.96</td>
+                </tr>
+                
+                <tr class="">
+                    <td>13</td>
+                    <td>メイショウドライブ </td>
+                    <td>4</td>
+                    <td>6.40%</td>
+                    <td>0.87</td>
+                    <td>7.4</td>
+                    <td>0.47</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 33.26%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>16</td>
+                    <td>カフェアリス</td>
+                    <td>16</td>
+                    <td>13</td>
+                    <td>140.1</td>
+                    <td>8.39</td>
+                </tr>
+                
+                <tr>
+                    <td>4</td>
+                    <td>カツノトゥウェルヴ</td>
+                    <td>15</td>
+                    <td>7</td>
+                    <td>111.0</td>
+                    <td>6.99</td>
+                </tr>
+                
+                <tr>
+                    <td>14</td>
+                    <td>キャラメリー</td>
+                    <td>14</td>
+                    <td>4</td>
+                    <td>107.0</td>
+                    <td>6.96</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番14を軸に</p><p>馬連: 10-14</p><p>ワイド: 10-14</p><p>馬単: 10-14</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番16番 (期待値: 8.39)</p><p>馬連: 10-8</p><p>三連複: 10-8-12</p><p>ワイド: 10-8, 10-12, 8-12</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="02">
+            <h2>競馬場: 福島, レース番号: 02</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>8</td>
+                    <td>クリノボタンチャン <span class="dark-horse-marker">★穴!</span></td>
+                    <td>16</td>
+                    <td>6.84%</td>
+                    <td>0.06</td>
+                    <td>121.1</td>
+                    <td>8.28</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>16</td>
+                    <td>シャンハイノハナ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>10</td>
+                    <td>6.84%</td>
+                    <td>0.19</td>
+                    <td>35.3</td>
+                    <td>2.41</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>7</td>
+                    <td>エコロジェイド <span class="dark-horse-marker">★穴!</span></td>
+                    <td>13</td>
+                    <td>6.73%</td>
+                    <td>0.14</td>
+                    <td>49.8</td>
+                    <td>3.35</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>9</td>
+                    <td>ミストラルフェザー <span class="dark-horse-marker">★穴!</span></td>
+                    <td>8</td>
+                    <td>6.73%</td>
+                    <td>0.25</td>
+                    <td>27.3</td>
+                    <td>1.84</td>
+                </tr>
+                
+                <tr class="">
+                    <td>3</td>
+                    <td>ブライティアブーケ </td>
+                    <td>4</td>
+                    <td>6.53%</td>
+                    <td>0.82</td>
+                    <td>8.0</td>
+                    <td>0.52</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 33.67%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>8</td>
+                    <td>クリノボタンチャン</td>
+                    <td>16</td>
+                    <td>1</td>
+                    <td>121.1</td>
+                    <td>8.28</td>
+                </tr>
+                
+                <tr>
+                    <td>1</td>
+                    <td>ノブダブルホワイト</td>
+                    <td>15</td>
+                    <td>6</td>
+                    <td>61.4</td>
+                    <td>4.01</td>
+                </tr>
+                
+                <tr>
+                    <td>7</td>
+                    <td>エコロジェイド</td>
+                    <td>13</td>
+                    <td>3</td>
+                    <td>49.8</td>
+                    <td>3.35</td>
+                </tr>
+                
+                <tr>
+                    <td>4</td>
+                    <td>アスコットレイ</td>
+                    <td>12</td>
+                    <td>9</td>
+                    <td>46.6</td>
+                    <td>2.94</td>
+                </tr>
+                
+                <tr>
+                    <td>14</td>
+                    <td>スピードイエロー</td>
+                    <td>11</td>
+                    <td>8</td>
+                    <td>45.1</td>
+                    <td>2.89</td>
+                </tr>
+                
+                <tr>
+                    <td>16</td>
+                    <td>シャンハイノハナ</td>
+                    <td>10</td>
+                    <td>2</td>
+                    <td>35.3</td>
+                    <td>2.41</td>
+                </tr>
+                
+                <tr>
+                    <td>9</td>
+                    <td>ミストラルフェザー</td>
+                    <td>8</td>
+                    <td>4</td>
+                    <td>27.3</td>
+                    <td>1.84</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番8を軸に</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番8番 (期待値: 8.28)</p><p>馬連: 8-16</p><p>三連複: 8-16-7</p><p>ワイド: 8-16, 8-7, 16-7</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="03">
+            <h2>競馬場: 福島, レース番号: 03</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>13</td>
+                    <td>バーンズベリー </td>
+                    <td>3</td>
+                    <td>7.56%</td>
+                    <td>0.79</td>
+                    <td>9.6</td>
+                    <td>0.73</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>キタノブレイク </td>
+                    <td>2</td>
+                    <td>7.36%</td>
+                    <td>0.97</td>
+                    <td>7.6</td>
+                    <td>0.56</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>1</td>
+                    <td>グランダイト <span class="dark-horse-marker">★穴!</span></td>
+                    <td>12</td>
+                    <td>7.04%</td>
+                    <td>0.31</td>
+                    <td>22.8</td>
+                    <td>1.60</td>
+                </tr>
+                
+                <tr class="">
+                    <td>7</td>
+                    <td>ティアップドライブ </td>
+                    <td>1</td>
+                    <td>7.04%</td>
+                    <td>1.90</td>
+                    <td>3.7</td>
+                    <td>0.26</td>
+                </tr>
+                
+                <tr class="">
+                    <td>15</td>
+                    <td>ジーティートゥルー </td>
+                    <td>9</td>
+                    <td>6.92%</td>
+                    <td>0.50</td>
+                    <td>13.9</td>
+                    <td>0.96</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 35.92%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>14</td>
+                    <td>ビリーヴアンドラン</td>
+                    <td>15</td>
+                    <td>10</td>
+                    <td>155.2</td>
+                    <td>10.21</td>
+                </tr>
+                
+                <tr>
+                    <td>1</td>
+                    <td>グランダイト</td>
+                    <td>12</td>
+                    <td>3</td>
+                    <td>22.8</td>
+                    <td>1.60</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番1を軸に</p><p>馬連: 13-1</p><p>ワイド: 13-1</p><p>馬単: 13-1</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番14番 (期待値: 10.21)</p><p>馬連: 13-8</p><p>三連複: 13-8-1</p><p>ワイド: 13-8, 13-1, 8-1</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="04">
+            <h2>競馬場: 福島, レース番号: 04</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>14</td>
+                    <td>ペイシャアーサー </td>
+                    <td>2</td>
+                    <td>7.53%</td>
+                    <td>1.54</td>
+                    <td>4.9</td>
+                    <td>0.37</td>
+                </tr>
+                
+                <tr class="">
+                    <td>10</td>
+                    <td>ラッキーカムカム </td>
+                    <td>3</td>
+                    <td>6.62%</td>
+                    <td>0.99</td>
+                    <td>6.7</td>
+                    <td>0.44</td>
+                </tr>
+                
+                <tr class="">
+                    <td>2</td>
+                    <td>アッケシ </td>
+                    <td>4</td>
+                    <td>6.62%</td>
+                    <td>0.82</td>
+                    <td>8.1</td>
+                    <td>0.54</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>16</td>
+                    <td>ココリハクタク <span class="dark-horse-marker">★穴!</span></td>
+                    <td>15</td>
+                    <td>6.52%</td>
+                    <td>0.08</td>
+                    <td>77.3</td>
+                    <td>5.04</td>
+                </tr>
+                
+                <tr class="">
+                    <td>11</td>
+                    <td>タマカヅラ </td>
+                    <td>1</td>
+                    <td>6.52%</td>
+                    <td>2.25</td>
+                    <td>2.9</td>
+                    <td>0.19</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 33.79%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>1</td>
+                    <td>サクラジマ</td>
+                    <td>16</td>
+                    <td>10</td>
+                    <td>90.1</td>
+                    <td>5.49</td>
+                </tr>
+                
+                <tr>
+                    <td>16</td>
+                    <td>ココリハクタク</td>
+                    <td>15</td>
+                    <td>4</td>
+                    <td>77.3</td>
+                    <td>5.04</td>
+                </tr>
+                
+                <tr>
+                    <td>12</td>
+                    <td>フェスティヴイリス</td>
+                    <td>12</td>
+                    <td>7</td>
+                    <td>61.4</td>
+                    <td>3.87</td>
+                </tr>
+                
+                <tr>
+                    <td>5</td>
+                    <td>フォルトレス</td>
+                    <td>11</td>
+                    <td>6</td>
+                    <td>33.8</td>
+                    <td>2.17</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番16を軸に</p><p>馬連: 14-16</p><p>ワイド: 14-16</p><p>馬単: 14-16</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番1番 (期待値: 5.49)</p><p>馬連: 14-10</p><p>三連複: 14-10-2</p><p>ワイド: 14-10, 14-2, 10-2</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="05">
+            <h2>競馬場: 福島, レース番号: 05</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>10</td>
+                    <td>リギーロ </td>
+                    <td>5</td>
+                    <td>8.60%</td>
+                    <td>0.72</td>
+                    <td>12.0</td>
+                    <td>1.03</td>
+                </tr>
+                
+                <tr class="">
+                    <td>3</td>
+                    <td>サンカシグレ </td>
+                    <td>3</td>
+                    <td>8.27%</td>
+                    <td>1.56</td>
+                    <td>5.3</td>
+                    <td>0.44</td>
+                </tr>
+                
+                <tr class="">
+                    <td>6</td>
+                    <td>ディベルティスマン </td>
+                    <td>2</td>
+                    <td>7.90%</td>
+                    <td>1.93</td>
+                    <td>4.1</td>
+                    <td>0.32</td>
+                </tr>
+                
+                <tr class="">
+                    <td>5</td>
+                    <td>ドウジャスティ </td>
+                    <td>1</td>
+                    <td>7.80%</td>
+                    <td>2.29</td>
+                    <td>3.4</td>
+                    <td>0.27</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>14</td>
+                    <td>カドバンソコヂカラ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>11</td>
+                    <td>7.38%</td>
+                    <td>0.11</td>
+                    <td>69.5</td>
+                    <td>5.13</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 39.95%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>2</td>
+                    <td>フルオブエナジー</td>
+                    <td>13</td>
+                    <td>7</td>
+                    <td>91.9</td>
+                    <td>6.58</td>
+                </tr>
+                
+                <tr>
+                    <td>13</td>
+                    <td>カルタジローネ</td>
+                    <td>12</td>
+                    <td>9</td>
+                    <td>75.0</td>
+                    <td>5.29</td>
+                </tr>
+                
+                <tr>
+                    <td>14</td>
+                    <td>カドバンソコヂカラ</td>
+                    <td>11</td>
+                    <td>5</td>
+                    <td>69.5</td>
+                    <td>5.13</td>
+                </tr>
+                
+                <tr>
+                    <td>4</td>
+                    <td>ミッドセンチュリー</td>
+                    <td>10</td>
+                    <td>6</td>
+                    <td>32.4</td>
+                    <td>2.36</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番14を軸に</p><p>馬連: 10-14</p><p>ワイド: 10-14</p><p>馬単: 10-14</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番7番 (期待値: 7.37)</p><p>馬連: 10-3</p><p>三連複: 10-3-6</p><p>ワイド: 10-3, 10-6, 3-6</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="06">
+            <h2>競馬場: 福島, レース番号: 06</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>10</td>
+                    <td>ゼンダンスカイ </td>
+                    <td>2</td>
+                    <td>7.90%</td>
+                    <td>0.66</td>
+                    <td>11.9</td>
+                    <td>0.94</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>2</td>
+                    <td>ブレットフライ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>8</td>
+                    <td>7.90%</td>
+                    <td>0.23</td>
+                    <td>34.7</td>
+                    <td>2.74</td>
+                </tr>
+                
+                <tr class="">
+                    <td>4</td>
+                    <td>エーデル </td>
+                    <td>3</td>
+                    <td>7.55%</td>
+                    <td>0.55</td>
+                    <td>13.7</td>
+                    <td>1.03</td>
+                </tr>
+                
+                <tr class="">
+                    <td>7</td>
+                    <td>エイブラムス </td>
+                    <td>1</td>
+                    <td>7.43%</td>
+                    <td>6.76</td>
+                    <td>1.1</td>
+                    <td>0.08</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>9</td>
+                    <td>ヴェラグエリエロ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>13</td>
+                    <td>7.31%</td>
+                    <td>0.04</td>
+                    <td>205.3</td>
+                    <td>15.01</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 38.10%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>9</td>
+                    <td>ヴェラグエリエロ</td>
+                    <td>13</td>
+                    <td>5</td>
+                    <td>205.3</td>
+                    <td>15.01</td>
+                </tr>
+                
+                <tr>
+                    <td>6</td>
+                    <td>ウェルキン</td>
+                    <td>12</td>
+                    <td>7</td>
+                    <td>93.7</td>
+                    <td>6.62</td>
+                </tr>
+                
+                <tr>
+                    <td>12</td>
+                    <td>オブシディアン</td>
+                    <td>11</td>
+                    <td>8</td>
+                    <td>70.7</td>
+                    <td>4.90</td>
+                </tr>
+                
+                <tr>
+                    <td>2</td>
+                    <td>ブレットフライ</td>
+                    <td>8</td>
+                    <td>2</td>
+                    <td>34.7</td>
+                    <td>2.74</td>
+                </tr>
+                
+                <tr>
+                    <td>3</td>
+                    <td>クールシェルタ</td>
+                    <td>9</td>
+                    <td>6</td>
+                    <td>34.7</td>
+                    <td>2.49</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番2を軸に</p><p>馬連: 10-2</p><p>ワイド: 10-2</p><p>馬単: 10-2</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番11番 (期待値: 16.00)</p><p>馬連: 10-2</p><p>馬単: 10-2</p><p>三連複: 10-2-4</p><p>ワイド: 10-2, 10-4, 2-4</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="07">
+            <h2>競馬場: 福島, レース番号: 07</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>5</td>
+                    <td>ファンユー <span class="dark-horse-marker">★穴!</span></td>
+                    <td>10</td>
+                    <td>8.12%</td>
+                    <td>0.13</td>
+                    <td>62.8</td>
+                    <td>5.10</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>11</td>
+                    <td>ガーデンプランナー <span class="dark-horse-marker">★穴!</span></td>
+                    <td>9</td>
+                    <td>8.01%</td>
+                    <td>0.22</td>
+                    <td>37.0</td>
+                    <td>2.96</td>
+                </tr>
+                
+                <tr class="">
+                    <td>2</td>
+                    <td>ライクアフラワー </td>
+                    <td>2</td>
+                    <td>7.67%</td>
+                    <td>1.92</td>
+                    <td>4.0</td>
+                    <td>0.31</td>
+                </tr>
+                
+                <tr class="">
+                    <td>1</td>
+                    <td>スプリングデイ </td>
+                    <td>7</td>
+                    <td>7.43%</td>
+                    <td>0.55</td>
+                    <td>13.5</td>
+                    <td>1.00</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>ジョウゲンノツキ </td>
+                    <td>1</td>
+                    <td>7.43%</td>
+                    <td>2.56</td>
+                    <td>2.9</td>
+                    <td>0.22</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 38.67%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>6</td>
+                    <td>ヴォンヌヴォー</td>
+                    <td>14</td>
+                    <td>6</td>
+                    <td>138.3</td>
+                    <td>10.11</td>
+                </tr>
+                
+                <tr>
+                    <td>3</td>
+                    <td>テキーラワルツ</td>
+                    <td>13</td>
+                    <td>8</td>
+                    <td>109.2</td>
+                    <td>7.71</td>
+                </tr>
+                
+                <tr>
+                    <td>5</td>
+                    <td>ファンユー</td>
+                    <td>10</td>
+                    <td>1</td>
+                    <td>62.8</td>
+                    <td>5.10</td>
+                </tr>
+                
+                <tr>
+                    <td>7</td>
+                    <td>ラセーヌシュメール</td>
+                    <td>11</td>
+                    <td>7</td>
+                    <td>64.8</td>
+                    <td>4.66</td>
+                </tr>
+                
+                <tr>
+                    <td>11</td>
+                    <td>ガーデンプランナー</td>
+                    <td>9</td>
+                    <td>2</td>
+                    <td>37.0</td>
+                    <td>2.96</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番5を軸に</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番6番 (期待値: 10.11)</p><p>馬連: 5-11</p><p>三連複: 5-11-2</p><p>ワイド: 5-11, 5-2, 11-2</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="08">
+            <h2>競馬場: 福島, レース番号: 08</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>13</td>
+                    <td>イズジョーノヒカリ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>14</td>
+                    <td>7.03%</td>
+                    <td>0.15</td>
+                    <td>46.1</td>
+                    <td>3.24</td>
+                </tr>
+                
+                <tr class="">
+                    <td>1</td>
+                    <td>ツインクルステージ </td>
+                    <td>10</td>
+                    <td>6.82%</td>
+                    <td>0.48</td>
+                    <td>14.2</td>
+                    <td>0.97</td>
+                </tr>
+                
+                <tr class="">
+                    <td>9</td>
+                    <td>グランカンタンテ </td>
+                    <td>4</td>
+                    <td>6.71%</td>
+                    <td>0.74</td>
+                    <td>9.1</td>
+                    <td>0.61</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>12</td>
+                    <td>セブンスリーローズ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>13</td>
+                    <td>6.60%</td>
+                    <td>0.21</td>
+                    <td>32.2</td>
+                    <td>2.13</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>3</td>
+                    <td>ウマピョイ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>12</td>
+                    <td>6.38%</td>
+                    <td>0.22</td>
+                    <td>29.4</td>
+                    <td>1.88</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 33.56%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>2</td>
+                    <td>パラダイスリズム</td>
+                    <td>16</td>
+                    <td>13</td>
+                    <td>189.7</td>
+                    <td>11.22</td>
+                </tr>
+                
+                <tr>
+                    <td>13</td>
+                    <td>イズジョーノヒカリ</td>
+                    <td>14</td>
+                    <td>1</td>
+                    <td>46.1</td>
+                    <td>3.24</td>
+                </tr>
+                
+                <tr>
+                    <td>12</td>
+                    <td>セブンスリーローズ</td>
+                    <td>13</td>
+                    <td>4</td>
+                    <td>32.2</td>
+                    <td>2.13</td>
+                </tr>
+                
+                <tr>
+                    <td>3</td>
+                    <td>ウマピョイ</td>
+                    <td>12</td>
+                    <td>5</td>
+                    <td>29.4</td>
+                    <td>1.88</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番13を軸に</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番2番 (期待値: 11.22)</p><p>馬連: 13-1</p><p>三連複: 13-1-9</p><p>ワイド: 13-1, 13-9, 1-9</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="09">
+            <h2>競馬場: 福島, レース番号: 09</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>10</td>
+                    <td>テイクザクラウン </td>
+                    <td>5</td>
+                    <td>11.15%</td>
+                    <td>1.15</td>
+                    <td>9.7</td>
+                    <td>1.08</td>
+                </tr>
+                
+                <tr class="">
+                    <td>2</td>
+                    <td>マイファミリー </td>
+                    <td>6</td>
+                    <td>10.77%</td>
+                    <td>1.07</td>
+                    <td>10.1</td>
+                    <td>1.09</td>
+                </tr>
+                
+                <tr class="">
+                    <td>3</td>
+                    <td>オールデュスヴラン </td>
+                    <td>1</td>
+                    <td>9.18%</td>
+                    <td>2.55</td>
+                    <td>3.6</td>
+                    <td>0.33</td>
+                </tr>
+                
+                <tr class="">
+                    <td>8</td>
+                    <td>モルトマエストーソ </td>
+                    <td>2</td>
+                    <td>9.02%</td>
+                    <td>2.10</td>
+                    <td>4.3</td>
+                    <td>0.39</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>5</td>
+                    <td>チャイボーグ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>11</td>
+                    <td>8.86%</td>
+                    <td>0.23</td>
+                    <td>38.5</td>
+                    <td>3.41</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 48.99%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>5</td>
+                    <td>チャイボーグ</td>
+                    <td>11</td>
+                    <td>5</td>
+                    <td>38.5</td>
+                    <td>3.41</td>
+                </tr>
+                
+                <tr>
+                    <td>1</td>
+                    <td>ワンダフルヘヴン</td>
+                    <td>10</td>
+                    <td>7</td>
+                    <td>17.0</td>
+                    <td>1.51</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番5を軸に</p><p>馬連: 10-5</p><p>ワイド: 10-5</p><p>馬単: 10-5</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番5番 (期待値: 3.41)</p><p>馬連: 10-2</p><p>三連複: 10-2-3</p><p>ワイド: 10-2, 10-3, 2-3</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="10">
+            <h2>競馬場: 福島, レース番号: 10</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>6</td>
+                    <td>アレナパラシオ </td>
+                    <td>7</td>
+                    <td>7.29%</td>
+                    <td>0.55</td>
+                    <td>13.3</td>
+                    <td>0.97</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>12</td>
+                    <td>ビターゼノビア <span class="dark-horse-marker">★穴!</span></td>
+                    <td>15</td>
+                    <td>7.29%</td>
+                    <td>0.08</td>
+                    <td>86.2</td>
+                    <td>6.28</td>
+                </tr>
+                
+                <tr class="">
+                    <td>13</td>
+                    <td>イサチルカゼニタツ </td>
+                    <td>8</td>
+                    <td>7.20%</td>
+                    <td>0.50</td>
+                    <td>14.3</td>
+                    <td>1.03</td>
+                </tr>
+                
+                <tr class="">
+                    <td>14</td>
+                    <td>サンドブラスト </td>
+                    <td>4</td>
+                    <td>7.20%</td>
+                    <td>0.87</td>
+                    <td>8.3</td>
+                    <td>0.60</td>
+                </tr>
+                
+                <tr class="">
+                    <td>7</td>
+                    <td>アセレラシオン </td>
+                    <td>3</td>
+                    <td>6.83%</td>
+                    <td>1.24</td>
+                    <td>5.5</td>
+                    <td>0.38</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 35.81%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>12</td>
+                    <td>ビターゼノビア</td>
+                    <td>15</td>
+                    <td>2</td>
+                    <td>86.2</td>
+                    <td>6.28</td>
+                </tr>
+                
+                <tr>
+                    <td>3</td>
+                    <td>スマートハンター</td>
+                    <td>13</td>
+                    <td>6</td>
+                    <td>39.0</td>
+                    <td>2.66</td>
+                </tr>
+                
+                <tr>
+                    <td>15</td>
+                    <td>ヤウガウ</td>
+                    <td>12</td>
+                    <td>9</td>
+                    <td>31.9</td>
+                    <td>2.08</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番12を軸に</p><p>馬連: 6-12</p><p>ワイド: 6-12</p><p>馬単: 6-12</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番12番 (期待値: 6.28)</p><p>馬連: 6-12</p><p>馬単: 6-12</p><p>三連複: 6-12-13</p><p>ワイド: 6-12, 6-13, 12-13</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="11">
+            <h2>競馬場: 福島, レース番号: 11</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>10</td>
+                    <td>ウインモナーク </td>
+                    <td>2</td>
+                    <td>6.93%</td>
+                    <td>1.82</td>
+                    <td>3.8</td>
+                    <td>0.26</td>
+                </tr>
+                
+                <tr class="">
+                    <td>4</td>
+                    <td>レッドアヴァンティ </td>
+                    <td>3</td>
+                    <td>6.84%</td>
+                    <td>1.01</td>
+                    <td>6.8</td>
+                    <td>0.47</td>
+                </tr>
+                
+                <tr class="">
+                    <td>11</td>
+                    <td>ツインクルトーズ </td>
+                    <td>6</td>
+                    <td>6.66%</td>
+                    <td>0.39</td>
+                    <td>17.1</td>
+                    <td>1.14</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>16</td>
+                    <td>デュガ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>12</td>
+                    <td>6.56%</td>
+                    <td>0.22</td>
+                    <td>30.5</td>
+                    <td>2.00</td>
+                </tr>
+                
+                <tr class="dark-horse">
+                    <td>14</td>
+                    <td>バンデルオーラ <span class="dark-horse-marker">★穴!</span></td>
+                    <td>14</td>
+                    <td>6.56%</td>
+                    <td>0.11</td>
+                    <td>58.6</td>
+                    <td>3.84</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 33.55%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>6</td>
+                    <td>ユキノファラオ</td>
+                    <td>16</td>
+                    <td>12</td>
+                    <td>96.2</td>
+                    <td>5.93</td>
+                </tr>
+                
+                <tr>
+                    <td>14</td>
+                    <td>バンデルオーラ</td>
+                    <td>14</td>
+                    <td>5</td>
+                    <td>58.6</td>
+                    <td>3.84</td>
+                </tr>
+                
+                <tr>
+                    <td>16</td>
+                    <td>デュガ</td>
+                    <td>12</td>
+                    <td>4</td>
+                    <td>30.5</td>
+                    <td>2.00</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番16を軸に</p><p>馬連: 10-16</p><p>ワイド: 10-16</p><p>馬単: 10-16</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番6番 (期待値: 5.93)</p><p>馬連: 10-4</p><p>三連複: 10-4-11</p><p>ワイド: 10-4, 10-11, 4-11</p>
+        </div>
+        </div>
+        
+        <div class="race-container" data-venue="福島" data-race-number="12">
+            <h2>競馬場: 福島, レース番号: 12</h2>
+            <h3>予想TOP5</h3>
+            
+            <table>
+                <tr>
+                    <th>馬番</th>
+                    <th>馬名</th>
+                    <th>人気</th>
+                    <th>予測確率</th>
+                    <th>信頼度</th>
+                    <th>単勝オッズ</th>
+                    <th>期待値</th>
+                </tr>
+        
+                <tr class="top-pick">
+                    <td>9</td>
+                    <td>シャーンゴッセ </td>
+                    <td>1</td>
+                    <td>9.41%</td>
+                    <td>2.94</td>
+                    <td>3.2</td>
+                    <td>0.30</td>
+                </tr>
+                
+                <tr class="">
+                    <td>11</td>
+                    <td>トモジャアルマンド </td>
+                    <td>4</td>
+                    <td>9.02%</td>
+                    <td>1.33</td>
+                    <td>6.8</td>
+                    <td>0.61</td>
+                </tr>
+                
+                <tr class="">
+                    <td>12</td>
+                    <td>スノーホルンロード </td>
+                    <td>7</td>
+                    <td>9.02%</td>
+                    <td>0.70</td>
+                    <td>12.9</td>
+                    <td>1.16</td>
+                </tr>
+                
+                <tr class="">
+                    <td>4</td>
+                    <td>ナゲットモンスター </td>
+                    <td>2</td>
+                    <td>8.75%</td>
+                    <td>1.62</td>
+                    <td>5.4</td>
+                    <td>0.47</td>
+                </tr>
+                
+                <tr class="">
+                    <td>1</td>
+                    <td>エフエイト </td>
+                    <td>3</td>
+                    <td>8.33%</td>
+                    <td>1.30</td>
+                    <td>6.4</td>
+                    <td>0.53</td>
+                </tr>
+                
+            </table>
+            <p>TOP5合計確率: 44.52%</p>
+        
+            <div class="suggestion-box">
+                <div class="suggestion-title">【穴馬候補】</div>
+                <p>※ 人気と予測順位の乖離が大きく、期待値の高い馬</p>
+                <table>
+                    <tr>
+                        <th>馬番</th>
+                        <th>馬名</th>
+                        <th>人気</th>
+                        <th>予測順位</th>
+                        <th>オッズ</th>
+                        <th>期待値</th>
+                    </tr>
+            
+                <tr>
+                    <td>10</td>
+                    <td>スモーキンビリー</td>
+                    <td>11</td>
+                    <td>7</td>
+                    <td>58.7</td>
+                    <td>4.80</td>
+                </tr>
+                
+                <tr>
+                    <td>3</td>
+                    <td>ドンアポロン</td>
+                    <td>9</td>
+                    <td>6</td>
+                    <td>22.5</td>
+                    <td>1.84</td>
+                </tr>
+                
+                </table>
+            </div>
+            
+                <div class="suggestion-box">
+                    <div class="suggestion-title">穴馬を含む買い目提案</div>
+                <p>馬番3を軸に</p><p>馬連: 9-3</p><p>ワイド: 9-3</p><p>馬単: 9-3</p>
+                </div>
+                
+        <div class="suggestion-box">
+            <div class="suggestion-title">【買い目提案】</div>
+        <p>期待値最大: 馬番8番 (期待値: 6.39)</p><p>馬連: 9-11</p><p>馬単: 9-11</p><p>三連複: 9-11-12</p><p>ワイド: 9-11, 9-12, 11-12</p>
+        </div>
+        </div>
+        
+        <div class="timestamp">予測実行日時: 2025年04月26日 23:58:43</div>
+        
+        <script>
+        // フィルタリング機能の実装
+        document.addEventListener('DOMContentLoaded', function() {
+            const venueFilter = document.getElementById('venue-filter');
+            const raceNumberFilter = document.getElementById('race-number-filter');
+            const clearFiltersBtn = document.getElementById('clear-filters');
+            const raceContainers = document.querySelectorAll('.race-container');
+            const raceCountElement = document.getElementById('race-count');
+            
+            // 全レース番号を保持する変数（修正: JavaScript内で定義）
+            const allRaceNumbers = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+            
+            // 表示中のレース数を更新する関数
+            function updateRaceCount() {
+                const visibleRaces = document.querySelectorAll('.race-container:not(.hidden)').length;
+                const totalRaces = raceContainers.length;
+                raceCountElement.textContent = `表示中: ${visibleRaces} / ${totalRaces} レース`;
+            }
+            
+            // フィルタリングを適用する関数
+            function applyFilters() {
+                const selectedVenue = venueFilter.value;
+                const selectedRaceNumber = raceNumberFilter.value;
+                
+                raceContainers.forEach(container => {
+                    const containerVenue = container.getAttribute('data-venue');
+                    const containerRaceNumber = container.getAttribute('data-race-number');
+                    
+                    const venueMatch = selectedVenue === 'all' || selectedVenue === containerVenue;
+                    const raceNumberMatch = selectedRaceNumber === 'all' || selectedRaceNumber === containerRaceNumber;
+                    
+                    if (venueMatch && raceNumberMatch) {  // 修正: and → &&
+                        container.classList.remove('hidden');
+                    } else {
+                        container.classList.add('hidden');
+                    }
+                });
+                
+                updateRaceCount();
+            }
+            
+            // イベントリスナーの設定
+            venueFilter.addEventListener('change', function() {
+                const selectedVenue = venueFilter.value;
+                
+                // レース番号フィルターをリセット
+                raceNumberFilter.innerHTML = '<option value="all">すべてのレース</option>';
+                
+                if (selectedVenue !== 'all') {
+                    // 選択された競馬場のレース番号だけを収集
+                    const availableRaceNumbers = new Set();
+                    raceContainers.forEach(container => {
+                        if (container.getAttribute('data-venue') === selectedVenue) {
+                            availableRaceNumbers.add(container.getAttribute('data-race-number'));
+                        }
+                    });
+                    
+                    // 収集したレース番号をソートして追加
+                    [...availableRaceNumbers].sort((a, b) => parseInt(a) - parseInt(b)).forEach(raceNum => {
+                        const option = document.createElement('option');
+                        option.value = raceNum;
+                        option.text = raceNum + 'レース';
+                        raceNumberFilter.add(option);
+                    });
+                } else {
+                    // すべての競馬場が選択された場合は、すべてのレース番号を復元
+                    allRaceNumbers.forEach(raceNum => {
+                        const option = document.createElement('option');
+                        option.value = raceNum;
+                        option.text = raceNum + 'レース';
+                        raceNumberFilter.add(option);
+                    });
+                }
+                
+                applyFilters();
+            });
+            
+            raceNumberFilter.addEventListener('change', applyFilters);
+            
+            clearFiltersBtn.addEventListener('click', function() {
+                // フィルターをリセット
+                venueFilter.value = 'all';
+                
+                // レース番号フィルターをリセットして全レース番号を復元
+                raceNumberFilter.innerHTML = '<option value="all">すべてのレース</option>';
+                allRaceNumbers.forEach(raceNum => {
+                    const option = document.createElement('option');
+                    option.value = raceNum;
+                    option.text = raceNum + 'レース';
+                    raceNumberFilter.add(option);
+                });
+                
+                raceNumberFilter.value = 'all';
+                applyFilters();
+            });
+            
+            // 初期表示
+            updateRaceCount();
+        });
+        </script>
+    </body>
+    </html>
+    
