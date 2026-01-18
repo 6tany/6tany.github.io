@@ -1,1 +1,0 @@
-# 6tany.github.io
